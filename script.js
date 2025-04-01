@@ -2,8 +2,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const envelope = document.querySelector('.envelope');
     const popup = document.getElementById('message-popup');
     const closeButton = document.getElementById('close-popup');
-    const popupMessage = popup.querySelector('p');
+    const video = document.getElementById('anniversary-video');
+    const nextButton = document.getElementById('next-slide');
+    const prevButton = document.getElementById('prev-slide');
+    const slide1 = document.getElementById('slide-1');
+    const slide2 = document.getElementById('slide-2');
     
+    // Add video error handling
+    video.addEventListener('error', (e) => {
+        console.error('Video Error:', video.error);
+        alert('There was an error loading the video. Please try again.');
+    });
+
+    // Add video loading handling
+    video.addEventListener('loadeddata', () => {
+        console.log('Video loaded successfully');
+    });
+
     // Add sparkle effect to envelope
     const createSparkle = () => {
         const sparkle = document.createElement('div');
@@ -31,35 +46,60 @@ document.addEventListener('DOMContentLoaded', () => {
         envelope.classList.remove('shadow-3xl');
     });
 
+    // Function to reset popup state
+    const resetPopupState = () => {
+        const popupContent = popup.querySelector('.popup-content');
+        popup.classList.remove('opacity-0');
+        popup.classList.remove('hidden');
+        popupContent.classList.remove('scale-95', 'opacity-0');
+        popupContent.classList.add('scale-100', 'opacity-100');
+        slide2.classList.add('hidden');
+        slide1.classList.remove('hidden');
+    };
+
     // Handle envelope click
     envelope.addEventListener('click', () => {
-        const messages = [
-            "You're amazing! ✨",
-            "Keep shining! 🌟",
-            "You make the world better! 🌍",
-            "Stay awesome! 💫",
-            "You're one of a kind! 💝"
-        ];
-        
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        popupMessage.textContent = randomMessage;
-        
-        popup.classList.remove('hidden');
-        popup.classList.add('opacity-100');
-        
-        // Add entrance animation to popup content
-        const popupContent = popup.querySelector('.popup-content');
-        popupContent.classList.add('scale-100', 'opacity-100');
+        resetPopupState();
+    });
+
+    // Handle next slide
+    nextButton.addEventListener('click', () => {
+        slide1.classList.add('hidden');
+        slide2.classList.remove('hidden');
+        // Start playing the video
+        video.play().catch(error => {
+            console.error('Error playing video:', error);
+            alert('There was an error playing the video. Please try again.');
+        });
+    });
+
+    // Handle previous slide
+    prevButton.addEventListener('click', () => {
+        slide2.classList.add('hidden');
+        slide1.classList.remove('hidden');
+        // Pause and reset the video
+        video.pause();
+        video.currentTime = 0;
     });
 
     // Handle popup close
     closeButton.addEventListener('click', () => {
+        // Pause the video
+        video.pause();
+        video.currentTime = 0;
+        
+        // Add closing animations
         popup.classList.add('opacity-0');
         const popupContent = popup.querySelector('.popup-content');
+        popupContent.classList.remove('scale-100', 'opacity-100');
         popupContent.classList.add('scale-95', 'opacity-0');
         
+        // Hide popup after animation
         setTimeout(() => {
             popup.classList.add('hidden');
+            // Remove the closing animations so it can open properly next time
+            popup.classList.remove('opacity-0');
+            popupContent.classList.remove('scale-95', 'opacity-0');
         }, 300);
     });
 
@@ -76,6 +116,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         .shadow-3xl {
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .slide {
+            transition: all 0.3s ease-in-out;
+        }
+        .video-frame {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+        }
+        .video-container {
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .popup {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .popup-content {
+            transition: all 0.3s ease-in-out;
         }
     `;
     document.head.appendChild(style);
