@@ -130,6 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
         .video-container {
             box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
+            position: relative;
+            z-index: 20;
+        }
+        .video-container video {
+            position: relative;
+            z-index: 21;
+            pointer-events: auto;
+        }
+        .video-container .absolute {
+            pointer-events: none;
         }
         .popup {
             transition: opacity 0.3s ease-in-out;
