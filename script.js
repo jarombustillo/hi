@@ -59,7 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle envelope click
     envelope.addEventListener('click', () => {
-        resetPopupState();
+        // Add click animation
+        envelope.style.transform = 'scale(1.1) rotate(5deg)';
+        envelope.style.transition = 'transform 0.3s ease';
+        
+        // Reset animation after delay
+        setTimeout(() => {
+            envelope.style.transform = 'scale(1) rotate(0deg)';
+        }, 300);
+
+        // Show popup after animation
+        setTimeout(() => {
+            resetPopupState();
+        }, 500);
     });
 
     // Handle next slide
