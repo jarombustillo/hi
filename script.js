@@ -146,10 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
             img.style.borderRadius = '0.5rem';
             img.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
             
-            // Add click handler for lightbox
-            img.addEventListener('click', () => {
-                showLightbox(img.src, i);
-            });
+            // Add hover animation class
+            img.classList.add('hover-animation');
             
             collageGrid.appendChild(img);
             
@@ -165,68 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loveText.style.opacity = '1';
         }, 2000);
     }
-
-    // Lightbox functionality
-    let currentImageIndex = 1;
-    const totalImages = 10;
-
-    function showLightbox(src, index) {
-        currentImageIndex = index;
-        lightboxImage.src = src;
-        lightbox.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function showNextImage() {
-        currentImageIndex = (currentImageIndex % totalImages) + 1;
-        lightboxImage.src = `uploads/${currentImageIndex}.jpg`;
-    }
-
-    function showPrevImage() {
-        currentImageIndex = (currentImageIndex - 2 + totalImages) % totalImages + 1;
-        lightboxImage.src = `uploads/${currentImageIndex}.jpg`;
-    }
-
-    // Add lightbox navigation
-    document.getElementById('next-image').addEventListener('click', showNextImage);
-    document.getElementById('prev-image').addEventListener('click', showPrevImage);
-
-    // Add touch swipe functionality
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    lightboxImage.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    lightboxImage.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const swipeDistance = touchEndX - touchStartX;
-
-        if (Math.abs(swipeDistance) > swipeThreshold) {
-            if (swipeDistance > 0) {
-                showPrevImage();
-            } else {
-                showNextImage();
-            }
-        }
-    }
-
-    // Add keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('hidden')) {
-            if (e.key === 'ArrowRight') {
-                showNextImage();
-            } else if (e.key === 'ArrowLeft') {
-                showPrevImage();
-            }
-        }
-    });
 
     // Handle lightbox close
     closeLightbox.addEventListener('click', () => {
@@ -263,32 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Restore scrolling
         document.body.style.overflow = '';
-    });
-
-    // Close collage with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (!lightbox.classList.contains('hidden')) {
-                lightbox.classList.add('hidden');
-                document.body.style.overflow = '';
-            } else if (!collageContainer.classList.contains('hidden')) {
-                // Hide the collage container
-                collageContainer.classList.add('hidden');
-                
-                // Reset the love text opacity
-                const loveText = collageContainer.querySelector('.love-text');
-                loveText.style.opacity = '0';
-                
-                // Reset all images
-                const images = collageContainer.querySelectorAll('.collage-image');
-                images.forEach(img => {
-                    img.style.opacity = '0';
-                    img.style.transform = 'translate(0, 0) rotate(0deg)';
-                });
-                
-                document.body.style.overflow = '';
-            }
-        }
     });
 
     // Add some CSS animations
@@ -338,9 +248,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .collage-image {
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .collage-image:hover {
+        .collage-image.hover-animation:hover {
             transform: scale(1.1) rotate(5deg) !important;
             z-index: 10;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .collage-grid {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem;
         }
     `;
     document.head.appendChild(style);
