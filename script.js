@@ -134,36 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show container
         collageContainer.classList.remove('hidden');
         
-        // Heart shape coordinates (normalized to 0-1)
-        const heartCoordinates = [
-            // Left lobe
-            { x: 0.2, y: 0.3 },
-            { x: 0.1, y: 0.4 },
-            { x: 0.2, y: 0.5 },
-            { x: 0.3, y: 0.4 },
-            // Right lobe
-            { x: 0.8, y: 0.3 },
-            { x: 0.9, y: 0.4 },
-            { x: 0.8, y: 0.5 },
-            { x: 0.7, y: 0.4 },
-            // Bottom point
-            { x: 0.5, y: 0.7 },
-            { x: 0.5, y: 0.8 }
-        ];
-        
-        // Create image elements in heart shape
+        // Create image elements with random positions and rotations
         for (let i = 1; i <= 10; i++) {
             const img = document.createElement('img');
             img.src = `uploads/${i}.jpg`;
-            img.className = 'collage-image w-32 h-32 sm:w-48 sm:h-48 object-cover rounded-lg shadow-lg transform transition-all duration-1000 cursor-pointer absolute';
-            
-            // Calculate position based on heart coordinates
-            const coord = heartCoordinates[i - 1];
-            const x = coord.x * 100;
-            const y = coord.y * 100;
-            
+            img.className = 'collage-image w-32 h-32 sm:w-48 sm:h-48 object-cover rounded-lg shadow-lg transform transition-all duration-1000 cursor-pointer';
             img.style.opacity = '0';
-            img.style.transform = `translate(${x}%, ${y}%) translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
+            img.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 20 - 10}deg)`;
             img.style.objectFit = 'cover';
             img.style.objectPosition = 'center';
             img.style.borderRadius = '0.5rem';
@@ -179,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Animate each image with a delay
             setTimeout(() => {
                 img.style.opacity = '1';
-                img.style.transform = `translate(${x}%, ${y}%) translate(-50%, -50%) rotate(0deg)`;
+                img.style.transform = 'translate(0, 0) rotate(0deg)';
             }, i * 200);
         }
         
@@ -360,20 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         .collage-image {
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            transform-origin: center;
         }
         .collage-image:hover {
             transform: scale(1.1) rotate(5deg) !important;
             z-index: 10;
-        }
-        .collage-grid {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
     `;
     document.head.appendChild(style);
