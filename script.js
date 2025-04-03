@@ -133,11 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Show container
         collageContainer.classList.remove('hidden');
+
+        // Image filenames with extensions to try
+        const imageFiles = [
+            '1.jpg', '2.jpg', '3.JPG', '4.jpg', '5.jpg',
+            '6.jpg', '7.jpg', '8.JPG', '9.JPG', '10.jpg'
+        ];
         
         // Create image elements with random positions and rotations
-        for (let i = 1; i <= 10; i++) {
+        imageFiles.forEach((filename, i) => {
             const img = document.createElement('img');
-            img.src = `uploads/${i}.jpg`;
+            img.src = `uploads/${filename}`;
             img.className = 'collage-image w-32 h-32 sm:w-48 sm:h-48 object-cover rounded-lg shadow-lg transform transition-all duration-1000 cursor-pointer';
             img.style.opacity = '0';
             img.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 20 - 10}deg)`;
@@ -148,6 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Add hover animation class
             img.classList.add('hover-animation');
+
+            // Add error handling for images
+            img.onerror = () => {
+                console.error(`Failed to load image: ${filename}`);
+                // Try alternate extension if the first one fails
+                if (filename.endsWith('.jpg')) {
+                    img.src = `uploads/${filename.replace('.jpg', '.JPG')}`;
+                } else if (filename.endsWith('.JPG')) {
+                    img.src = `uploads/${filename.replace('.JPG', '.jpg')}`;
+                }
+            };
             
             collageGrid.appendChild(img);
             
@@ -155,8 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 img.style.opacity = '1';
                 img.style.transform = 'translate(0, 0) rotate(0deg)';
-            }, i * 200);
-        }
+            }, (i + 1) * 200);
+        });
         
         // Show love text after images
         setTimeout(() => {
