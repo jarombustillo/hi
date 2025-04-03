@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevButton = document.getElementById('prev-slide');
     const slide1 = document.getElementById('slide-1');
     const slide2 = document.getElementById('slide-2');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const closeLightbox = document.getElementById('close-lightbox');
+    const closeCollage = document.getElementById('close-collage');
+    const collageContainer = document.getElementById('collage-container');
     
     // Add video error handling
     video.addEventListener('error', (e) => {
@@ -112,7 +117,201 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove the closing animations so it can open properly next time
             popup.classList.remove('opacity-0');
             popupContent.classList.remove('scale-95', 'opacity-0');
+            
+            // Show collage
+            showCollage();
         }, 300);
+    });
+
+    // Function to show collage
+    function showCollage() {
+        const collageGrid = collageContainer.querySelector('.collage-grid');
+        const loveText = collageContainer.querySelector('.love-text');
+        
+        // Clear previous images
+        collageGrid.innerHTML = '';
+        
+        // Show container
+        collageContainer.classList.remove('hidden');
+        
+        // Heart shape coordinates (normalized to 0-1)
+        const heartCoordinates = [
+            // Left lobe
+            { x: 0.2, y: 0.3 },
+            { x: 0.1, y: 0.4 },
+            { x: 0.2, y: 0.5 },
+            { x: 0.3, y: 0.4 },
+            // Right lobe
+            { x: 0.8, y: 0.3 },
+            { x: 0.9, y: 0.4 },
+            { x: 0.8, y: 0.5 },
+            { x: 0.7, y: 0.4 },
+            // Bottom point
+            { x: 0.5, y: 0.7 },
+            { x: 0.5, y: 0.8 }
+        ];
+        
+        // Create image elements in heart shape
+        for (let i = 1; i <= 10; i++) {
+            const img = document.createElement('img');
+            img.src = `uploads/${i}.jpg`;
+            img.className = 'collage-image w-32 h-32 sm:w-48 sm:h-48 object-cover rounded-lg shadow-lg transform transition-all duration-1000 cursor-pointer absolute';
+            
+            // Calculate position based on heart coordinates
+            const coord = heartCoordinates[i - 1];
+            const x = coord.x * 100;
+            const y = coord.y * 100;
+            
+            img.style.opacity = '0';
+            img.style.transform = `translate(${x}%, ${y}%) translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
+            img.style.objectFit = 'cover';
+            img.style.objectPosition = 'center';
+            img.style.borderRadius = '0.5rem';
+            img.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+            
+            // Add click handler for lightbox
+            img.addEventListener('click', () => {
+                showLightbox(img.src, i);
+            });
+            
+            collageGrid.appendChild(img);
+            
+            // Animate each image with a delay
+            setTimeout(() => {
+                img.style.opacity = '1';
+                img.style.transform = `translate(${x}%, ${y}%) translate(-50%, -50%) rotate(0deg)`;
+            }, i * 200);
+        }
+        
+        // Show love text after images
+        setTimeout(() => {
+            loveText.style.opacity = '1';
+        }, 2000);
+    }
+
+    // Lightbox functionality
+    let currentImageIndex = 1;
+    const totalImages = 10;
+
+    function showLightbox(src, index) {
+        currentImageIndex = index;
+        lightboxImage.src = src;
+        lightbox.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function showNextImage() {
+        currentImageIndex = (currentImageIndex % totalImages) + 1;
+        lightboxImage.src = `uploads/${currentImageIndex}.jpg`;
+    }
+
+    function showPrevImage() {
+        currentImageIndex = (currentImageIndex - 2 + totalImages) % totalImages + 1;
+        lightboxImage.src = `uploads/${currentImageIndex}.jpg`;
+    }
+
+    // Add lightbox navigation
+    document.getElementById('next-image').addEventListener('click', showNextImage);
+    document.getElementById('prev-image').addEventListener('click', showPrevImage);
+
+    // Add touch swipe functionality
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    lightboxImage.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    lightboxImage.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const swipeDistance = touchEndX - touchStartX;
+
+        if (Math.abs(swipeDistance) > swipeThreshold) {
+            if (swipeDistance > 0) {
+                showPrevImage();
+            } else {
+                showNextImage();
+            }
+        }
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('hidden')) {
+            if (e.key === 'ArrowRight') {
+                showNextImage();
+            } else if (e.key === 'ArrowLeft') {
+                showPrevImage();
+            }
+        }
+    });
+
+    // Handle lightbox close
+    closeLightbox.addEventListener('click', () => {
+        lightbox.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore scrolling
+    });
+
+    // Close lightbox when clicking outside the image
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            lightbox.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    });
+
+    // Handle collage close
+    closeCollage.addEventListener('click', () => {
+        // Hide the collage container
+        collageContainer.classList.add('hidden');
+        
+        // Reset any open lightbox
+        lightbox.classList.add('hidden');
+        
+        // Reset the love text opacity
+        const loveText = collageContainer.querySelector('.love-text');
+        loveText.style.opacity = '0';
+        
+        // Reset all images
+        const images = collageContainer.querySelectorAll('.collage-image');
+        images.forEach(img => {
+            img.style.opacity = '0';
+            img.style.transform = 'translate(0, 0) rotate(0deg)';
+        });
+        
+        // Restore scrolling
+        document.body.style.overflow = '';
+    });
+
+    // Close collage with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (!lightbox.classList.contains('hidden')) {
+                lightbox.classList.add('hidden');
+                document.body.style.overflow = '';
+            } else if (!collageContainer.classList.contains('hidden')) {
+                // Hide the collage container
+                collageContainer.classList.add('hidden');
+                
+                // Reset the love text opacity
+                const loveText = collageContainer.querySelector('.love-text');
+                loveText.style.opacity = '0';
+                
+                // Reset all images
+                const images = collageContainer.querySelectorAll('.collage-image');
+                images.forEach(img => {
+                    img.style.opacity = '0';
+                    img.style.transform = 'translate(0, 0) rotate(0deg)';
+                });
+                
+                document.body.style.overflow = '';
+            }
+        }
     });
 
     // Add some CSS animations
@@ -158,6 +357,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         .popup-content {
             transition: all 0.3s ease-in-out;
+        }
+        .collage-image {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            transform-origin: center;
+        }
+        .collage-image:hover {
+            transform: scale(1.1) rotate(5deg) !important;
+            z-index: 10;
+        }
+        .collage-grid {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     `;
     document.head.appendChild(style);

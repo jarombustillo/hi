@@ -14,8 +14,8 @@
             <div class="pocket absolute w-full h-full bg-white rounded-lg"></div>
             <div class="letter absolute w-[90%] h-[90%] bg-white rounded-lg shadow-lg left-[5%] top-[5%] p-4">
                 <div class="letter-content">
-                    <h2 class="text-2xl font-bold text-purple-600 mb-2">Hello!</h2>
-                    <p class="text-gray-700">Click to open</p>
+                    <h2 class="text-2xl font-bold text-purple-600 mb-2">Hi love</h2>
+                    <p class="text-gray-700">Pindota ko palihug</p>
                 </div>
             </div>
         </div>
@@ -66,6 +66,30 @@
             </div>
         </div>
     </div>   
+    <div id="collage-container" class="fixed inset-0 bg-black bg-opacity-50 hidden overflow-hidden">
+        <div class="collage-grid absolute inset-0 flex flex-wrap justify-center items-center p-2 sm:p-4 gap-2 sm:gap-4 overflow-y-auto">
+        </div>
+        <div class="love-text absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-3xl sm:text-6xl font-bold opacity-0 transition-opacity duration-500 text-center px-4">
+            Happy 2nd Anniversary
+        </div>
+        <button id="close-collage" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10">
+            ×
+        </button>
+    </div>
+    <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex items-center justify-center">
+        <div class="relative w-full h-full flex items-center justify-center">
+            <img id="lightbox-image" class="max-w-[90vw] max-h-[90vh] object-contain" src="" alt="Enlarged image">
+            <button id="close-lightbox" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors">
+                ×
+            </button>
+            <button id="prev-image" class="absolute left-4 text-white text-4xl hover:text-gray-300 transition-colors">
+                ‹
+            </button>
+            <button id="next-image" class="absolute right-4 text-white text-4xl hover:text-gray-300 transition-colors">
+                ›
+            </button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html> 
